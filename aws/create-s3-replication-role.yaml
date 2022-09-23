@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template creates a S3 replication role for a local S3 bucket.
+
+Parameters:
+  BucketType:
+    AllowedValues:
+      - archive
+      - central
+      - general
+    Default: general
+    Description: archive replicates from account to storage; central replicates from storage to account.
+    Type: String
+
+  SourceAccountAcronym:
+    AllowedValues:
+      - tres
+      - tiff
+      - tina
+      - anna
+      - giul
+    Description: Choose the acronym for your account.
+    Type: String
+
+  SourceBucketName:
+    Description: Name of the local S3 bucket in the source account.
+    Type: String
+
+  Suffix:
+    Description: The Suffix you used to create your source and target buckets.
+    Type: String
+
+  TargetBucketName:
+    Description: Name of the archive S3 bucket in the Target account.
+    Type: String
+
+  TargetAccountAcronym:
+    AllowedValues:
+      - tres
+      - tiff
+      - tina
+      - anna
+      - giul
+    Description: Choose the acronym for your account.
+    Type: String
+
+Resources:
+  S3ReplicationRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 's3.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      MaxSessionDuration: 43200
+      Path: /
+      RoleName: !Join
+        - '-'
+        - - !Ref SourceAccountAcronym
+          - 'to'
+          - !Ref TargetAccountAcronym
+          - !Ref Suffix
+          - !Ref BucketType
+          - 's3-rep-role'
+
+  S3ReplicationPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: !Join
+        - '-'
+        - - !Ref SourceAccountAcronym
+          - 'to'
+          - !Ref TargetAccountAcronym
+          - !Ref Suffix
+          - !Ref BucketType
+          - 's3-rep-policy'
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:GetReplicationConfiguration'
+              - 's3:ListBucket'
+            Resource: !Sub 'arn:aws:s3:::${SourceBucketName}'
+          - Effect: Allow
+            Action:
+              - 's3:GetObjectVersionForReplication'
+              - 's3:GetObjectVersionAcl'
+              - 's3:GetObjectVersionTagging'
+            Resource: !Sub 'arn:aws:s3:::${SourceBucketName}/*'
+          - Effect: Allow
+            Action:
+              - 's3:ReplicateObject'
+              - 's3:ReplicateDelete'
+              - 's3:ReplicateTags'
+              - 's3:ObjectOwnerOverrideToBucketOwner'
+            Resource: !Sub 'arn:aws:s3:::${TargetBucketName}/*'
+      Roles:
+        - !Ref S3ReplicationRole
+
+Outputs:
+  S3ReplicationRoleArn:
+    Description: S3 replication role ARN
+    Value: !GetAtt  S3ReplicationRole.Arn

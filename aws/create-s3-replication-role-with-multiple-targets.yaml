@@ -29,17 +29,31 @@ Parameters:
     Description: The Suffix you used to create your source and target buckets.
     Type: String
 
-  TargetBucketName:
+  TargetBucketName1:
+    Description: Name of the archive S3 bucket in the Target account.
+    Type: String
+
+  TargetBucketName2:
+    Description: Name of the archive S3 bucket in the Target account.
+    Type: String
+
+  TargetBucketName3:
+    Description: Name of the archive S3 bucket in the Target account.
+    Type: String
+
+  TargetBucketName4:
     Description: Name of the archive S3 bucket in the Target account.
     Type: String
 
   TargetAccountAcronym:
     AllowedValues:
+      - all
       - tres
       - tiff
       - tina
       - anna
       - giul
+    Default: all
     Description: Choose the acronym for your account.
     Type: String
 
@@ -90,14 +104,18 @@ Resources:
               - 's3:GetObjectVersionForReplication'
               - 's3:GetObjectVersionAcl'
               - 's3:GetObjectVersionTagging'
-            Resource: !Sub 'arn:aws:s3:::${SourceBucketName}/*'
+            Resource: !Sub 'arn:aws:s3:::${SourceBucketName}'
           - Effect: Allow
             Action:
               - 's3:ReplicateObject'
               - 's3:ReplicateDelete'
               - 's3:ReplicateTags'
               - 's3:ObjectOwnerOverrideToBucketOwner'
-            Resource: !Sub 'arn:aws:s3:::${TargetBucketName}/*'
+            Resource:
+              - !Sub 'arn:aws:s3:::${TargetBucketName1}/*'
+              - !Sub 'arn:aws:s3:::${TargetBucketName2}/*'
+              - !Sub 'arn:aws:s3:::${TargetBucketName3}/*'
+              - !Sub 'arn:aws:s3:::${TargetBucketName4}/*'
       Roles:
         - !Ref S3ReplicationRole
 

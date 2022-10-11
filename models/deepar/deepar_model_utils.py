@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 from tqdm import tqdm
 
@@ -49,3 +50,10 @@ def deepar_station_data(data, station_col, station_time, freq, max_date):
         station_dict[station] = temp_dict
         
     return station_dict
+
+# write dictionary to jsonlines file format
+def write_dicts_to_file(path, data):
+    with open(path, "wb") as fp:
+        for d in data:
+            fp.write(json.dumps(d).encode("utf-8"))
+            fp.write("\n".encode("utf-8"))

@@ -1,5 +1,6 @@
 import pandas as pd
 from tqdm import tqdm
+from darts import TimeSeries
 
 
 # clean and prepare trips data
@@ -32,20 +33,19 @@ def get_station_data(data, station_col, station_time, station, freq, max_date):
     
     return temp_series_freq
 
-# organize data required for the DeepAR model
-def deepar_station_data(data, station_col, station_time, freq, max_date):
+# format data for darts package
+def darts_station_data(data, station_col, station_time, freq, max_date):
     
-    station_dict = {}
+    station_list = []
     
     for station in tqdm(data[station_col].unique()):
 
-        temp_dict = {}
         temp_series_freq = get_station_data(data, station_col, station_time, station, freq, max_date)
-
-        # specify the start of the series and the series itself
-        temp_dict = {"start": str(temp_series_freq.index[0]),
-                     "target": temp_series_freq["size"].tolist()}
-
-        station_dict[station] = temp_dict
+        temp_series_freq["date"] = temp_series_freq.index
         
-    return station_dict
+        # change data to be a darts TimeSeries type
+        temp_list = TimeSeries.from_dataframe(temp_series_freq, "date", "size")
+
+        station_list.append(temp_list)
+        
+    return station_list

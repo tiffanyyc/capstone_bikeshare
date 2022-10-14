@@ -34,22 +34,33 @@ def get_station_data(data, station_col, station_time, station, freq, max_date):
     return temp_series_freq
 
 # organize data required for the DeepAR model
-def deepar_station_data(data, station_col, station_time, freq, max_date):
+def deepar_station_data(data, station_col, station_time, freq, max_date, train_date, test_date):
     
-    station_dict = {}
+    train_list = []
+    test_list = []
     
     for station in tqdm(data[station_col].unique()):
 
-        temp_dict = {}
-        temp_series_freq = get_station_data(data, station_col, station_time, station, freq, max_date)
-
-        # specify the start of the series and the series itself
-        temp_dict = {"start": str(temp_series_freq.index[0]),
-                     "target": temp_series_freq["size"].tolist()}
-
-        station_dict[station] = temp_dict
+        temp_train_dict = {}
+        temp_test_dict = {}
         
-    return station_dict
+        temp_series_freq = get_station_data(data, station_col, station_time, station, freq, max_date)
+        
+        # make sure all stations have existed before the test period
+        if temp_series_freq.index[0] < pd.to_datetime(test_date):
+            
+            # TRAIN: specify the start of the series and the series itself
+            temp_train_dict = {"start": str(temp_series_freq.loc[:train_date].index[0]),
+                               "target": temp_series_freq.loc[:train_date]["size"].tolist()}
+
+            # TEST: specify the start of the series and the series itself
+            temp_test_dict = {"start": str(temp_series_freq.loc[test_date:].index[0]),
+                              "target": temp_series_freq.loc[test_date:]["size"].tolist()}
+
+            train_list.append(temp_train_dict)
+            test_list.append(temp_test_dict)
+        
+    return train_list, test_list
 
 # write dictionary to jsonlines file format
 def write_dicts_to_file(path, data):

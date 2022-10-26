@@ -36,6 +36,22 @@ def get_station_data(data, station_col, station_time, station, freq, max_date):
     
     return temp_series_freq
 
+# cluster stations
+def cluster_stations(data, n_cluster, station_col):
+    station_cluster = {}
+    n_cluster = n_cluster
+
+    cluster_count = 0
+    for n in range(len(data)):
+
+        if n < n_cluster:
+            station_cluster[data.iloc[n][station_col].astype(int)] = [cluster_count]
+            cluster_count += 1
+        else:
+            station_cluster[data.iloc[n][station_col].astype(int)] = [cluster_count]
+            
+    return station_cluster
+
 # organize data required for the DeepAR model
 def deepar_station_data(data, station_col, station_time, freq, max_date, train_date, test_date):
     

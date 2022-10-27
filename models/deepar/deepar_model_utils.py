@@ -36,7 +36,25 @@ def get_station_data(data, station_col, station_time, station, freq, max_date):
     
     return temp_series_freq
 
-# cluster stations
+# CLUSTER: get individual station id and standardize
+def get_cluster_data(data, station_col, station_time, station, freq, min_date, max_date):
+    
+    # filter for each station
+    temp_series = data[data[station_col] == station]
+    temp_series.set_index(station_time, inplace = True)
+    
+    # downsample trips to freq increments
+    temp_series_freq = temp_series.resample(freq).sum()
+    temp_daterange = pd.date_range(start = min_date, end = max_date, freq = freq)
+    
+    # ensure the series reaches the end/max_date
+    temp_series_freq = temp_series_freq.reindex(temp_daterange).fillna(0)
+    temp_series_freq = temp_series_freq.drop([station_col], axis = 1)
+    temp_series_freq["size"] = temp_series_freq["size"].astype(int)
+    
+    return temp_series_freq["size"].tolist()
+
+# CLUSTER: cluster stations into a set number of clusters
 def cluster_stations(data, n_cluster, station_col):
     station_cluster = {}
     n_cluster = n_cluster

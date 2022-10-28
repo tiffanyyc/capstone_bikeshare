@@ -19,7 +19,7 @@ def prep_station_data(data, station_col, station_time):
     return trips_clean_group
 
 # get individual station id and standardize
-def get_station_data(data, station_col, station_time, station, freq, max_date):
+def get_station_data(data, station_col, station_time, station, freq, max_date, cluster = False, min_date = None):
     
     # filter for each station
     temp_series = data[data[station_col] == station]
@@ -27,7 +27,10 @@ def get_station_data(data, station_col, station_time, station, freq, max_date):
     
     # downsample trips to freq increments
     temp_series_freq = temp_series.resample(freq).sum()
-    temp_daterange = pd.date_range(start = temp_series_freq.index[0], end = max_date, freq = freq)
+    if cluster:
+        temp_daterange = pd.date_range(start = min_date, end = max_date, freq = freq)
+    else:
+        temp_daterange = pd.date_range(start = temp_series_freq.index[0], end = max_date, freq = freq)
     
     # ensure the series reaches the end/max_date
     temp_series_freq = temp_series_freq.reindex(temp_daterange).fillna(0)
@@ -35,24 +38,6 @@ def get_station_data(data, station_col, station_time, station, freq, max_date):
     temp_series_freq["size"] = temp_series_freq["size"].astype(int)
     
     return temp_series_freq
-
-# CLUSTER: get individual station id and standardize
-def get_cluster_data(data, station_col, station_time, station, freq, min_date, max_date):
-    
-    # filter for each station
-    temp_series = data[data[station_col] == station]
-    temp_series.set_index(station_time, inplace = True)
-    
-    # downsample trips to freq increments
-    temp_series_freq = temp_series.resample(freq).sum()
-    temp_daterange = pd.date_range(start = min_date, end = max_date, freq = freq)
-    
-    # ensure the series reaches the end/max_date
-    temp_series_freq = temp_series_freq.reindex(temp_daterange).fillna(0)
-    temp_series_freq = temp_series_freq.drop([station_col], axis = 1)
-    temp_series_freq["size"] = temp_series_freq["size"].astype(int)
-    
-    return temp_series_freq["size"].tolist()
 
 # CLUSTER: cluster stations into a set number of clusters
 def cluster_stations(data, n_cluster, station_col):

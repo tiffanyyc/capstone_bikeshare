@@ -56,7 +56,7 @@ def cluster_stations(data, n_cluster, station_col):
     return station_cluster
 
 # organize data required for the DeepAR model
-def deepar_station_data(data, station_col, station_time, freq, max_date, train_date, test_date):
+def deepar_station_data(data, station_col, station_time, freq, max_date, train_date, test_date, cluster = False, cluster_data = None):
     
     train_list = []
     test_list = []
@@ -78,6 +78,12 @@ def deepar_station_data(data, station_col, station_time, freq, max_date, train_d
             # TEST: specify the start of the series and the series itself
             temp_test_dict = {"start": str(temp_series_freq.loc[test_date:].index[0]),
                               "target": temp_series_freq.loc[test_date:]["size"].tolist()}
+            
+            # CAT: add the category of the station to the dict
+            if cluster:
+                cluster_cat = cluster_data[cluster_data["station id"] == station]["cluster"].tolist()
+                temp_train_dict["cat"] = cluster_cat
+                temp_test_dict["cat"] = cluster_cat
 
             train_list.append(temp_train_dict)
             test_list.append(temp_test_dict)

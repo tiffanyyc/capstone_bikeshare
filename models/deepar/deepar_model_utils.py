@@ -19,7 +19,7 @@ def prep_station_data(data, station_col, station_time):
     return trips_clean_group
 
 # get individual station id and standardize
-def get_station_data(data, station_col, station_time, station, freq, max_date):
+def get_station_data(data, station_col, station_time, station, freq, max_date, cluster = False, min_date = None):
     
     # filter for each station
     temp_series = data[data[station_col] == station]
@@ -27,7 +27,10 @@ def get_station_data(data, station_col, station_time, station, freq, max_date):
     
     # downsample trips to freq increments
     temp_series_freq = temp_series.resample(freq).sum()
-    temp_daterange = pd.date_range(start = temp_series_freq.index[0], end = max_date, freq = freq)
+    if cluster:
+        temp_daterange = pd.date_range(start = min_date, end = max_date, freq = freq)
+    else:
+        temp_daterange = pd.date_range(start = temp_series_freq.index[0], end = max_date, freq = freq)
     
     # ensure the series reaches the end/max_date
     temp_series_freq = temp_series_freq.reindex(temp_daterange).fillna(0)
@@ -35,24 +38,6 @@ def get_station_data(data, station_col, station_time, station, freq, max_date):
     temp_series_freq["size"] = temp_series_freq["size"].astype(int)
     
     return temp_series_freq
-
-# CLUSTER: get individual station id and standardize
-def get_cluster_data(data, station_col, station_time, station, freq, min_date, max_date):
-    
-    # filter for each station
-    temp_series = data[data[station_col] == station]
-    temp_series.set_index(station_time, inplace = True)
-    
-    # downsample trips to freq increments
-    temp_series_freq = temp_series.resample(freq).sum()
-    temp_daterange = pd.date_range(start = min_date, end = max_date, freq = freq)
-    
-    # ensure the series reaches the end/max_date
-    temp_series_freq = temp_series_freq.reindex(temp_daterange).fillna(0)
-    temp_series_freq = temp_series_freq.drop([station_col], axis = 1)
-    temp_series_freq["size"] = temp_series_freq["size"].astype(int)
-    
-    return temp_series_freq["size"].tolist()
 
 # CLUSTER: cluster stations into a set number of clusters
 def cluster_stations(data, n_cluster, station_col):
@@ -71,7 +56,7 @@ def cluster_stations(data, n_cluster, station_col):
     return station_cluster
 
 # organize data required for the DeepAR model
-def deepar_station_data(data, station_col, station_time, freq, max_date, train_date, test_date):
+def deepar_station_data(data, station_col, station_time, freq, max_date, train_date, test_date, cluster = False, cluster_data = None):
     
     train_list = []
     test_list = []
@@ -93,6 +78,12 @@ def deepar_station_data(data, station_col, station_time, freq, max_date, train_d
             # TEST: specify the start of the series and the series itself
             temp_test_dict = {"start": str(temp_series_freq.loc[test_date:].index[0]),
                               "target": temp_series_freq.loc[test_date:]["size"].tolist()}
+            
+            # CAT: add the category of the station to the dict
+            if cluster:
+                cluster_cat = cluster_data[cluster_data["station id"] == station]["cluster"].tolist()
+                temp_train_dict["cat"] = cluster_cat
+                temp_test_dict["cat"] = cluster_cat
 
             train_list.append(temp_train_dict)
             test_list.append(temp_test_dict)

@@ -6,7 +6,7 @@ Capstone project by Anna Cheng, Tiffany Cheng, Tina Fang, Giulia Olsson, and Tre
 
 ## Motivation
 
-**Bikeshare Wizard forecasts bike and dock availability that will benefit thousands of users a day in Boston.** By combining historical trips data and real-time station status data from Boston's Bluebikes bikeshare system, we are applying two DeepAR time series models for our MVP. Currently, users rely on the real-time station status data provided in the Bluebikes app; however, there is no guarantee that that same number of bikes and docks will be available by the time the user arrives at the station. Our MVP provides forecasts in 15-minute increments up to 3 days for each station in the system, which allows users to plan their commutes ahead of time. **Our mission is to make bikeshare more reliable and to ensure that it remains an attractive and climate-friendly form of transportation.**
+**Bikeshare Wizard forecasts bike and dock availability that will benefit thousands of users a day in Boston. Our mission is to make bikeshare more reliable and to ensure that it remains an attractive and climate-friendly form of transportation.** By combining historical trips data and real-time station status data from Boston's Bluebikes bikeshare system, we are applying two DeepAR time series models for our MVP. Currently, users rely on the real-time station status data provided in the Bluebikes app; however, there is no guarantee that that same number of bikes and docks will be available by the time the user arrives at the station. Our MVP provides forecasts in 15-minute increments up to 3 days for each station in the system, which allows users to plan their commutes ahead of time.
 
 ## Impact
 
@@ -14,4 +14,8 @@ Bikeshare is a popular form of transportation in many cities across the world, s
 
 ## User Interviews
 
-To better understand how we can serve potential users, we conducted a series of interviews with current users of bikeshare in Boston and in New York City.
+To better understand how we can serve potential users, we conducted a series of interviews with current users of bikeshare in Boston and in New York City. We learned that some users wanted predictions from 10 mins to more than 1 day into the future, so we decided to provide forecasts in 15-minute increments for 3 days.
+
+## Data and EDA
+
+Boston's Bluebikes system releases monthly data on their [website](https://www.bluebikes.com/system-data) that date back to 2015. These data come in the form of trips completed and include information on start and end station and start and end timestamp. Across all the years of data, there were around 15 million trips taken spread across about 500 different stations.

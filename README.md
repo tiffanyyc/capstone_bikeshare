@@ -2,7 +2,7 @@
 
 Capstone project by Anna Cheng, Tiffany Cheng, Tina Fang, Giulia Olsson, and Tres Pimental for UC Berkeley's Master of Information and Data Science program.
 
-<img src="images/logo.PNG" width="100">
+<img src="images/logo.PNG" width="120">
 
 ## Motivation
 
@@ -18,4 +18,12 @@ To better understand how we can serve potential users, we conducted a series of 
 
 ## Data and EDA
 
-Boston's Bluebikes system releases monthly data on their [website](https://www.bluebikes.com/system-data) that date back to 2015. These data come in the form of trips completed and include information on start and end station and start and end timestamp. Across all the years of data, there were around 15 million trips taken spread across about 500 different stations.
+Boston's Bluebikes system releases monthly data on their [website](https://www.bluebikes.com/system-data) that date back to 2015. These data come in the form of trips completed and include information on start and end station and start and end timestamp. Across all the years of data, there were around 15 million trips taken spread across about 500 different stations. We did some data cleaning to remove trips that had a station longitude and/or latitude equal to 0.
+
+The most frequently taken trips occurred around the MIT campus in Cambridge.
+
+<img src="images/popular_trips.PNG" width="300">
+
+There is strong seasonality in the number of trips taken per month over the years. It is also important to note that the pandemic impacted ridership as well. For this reason, we chose to restrict the data we build the models with to the timeframe of August 2020 through August 2022.
+
+<img src="images/time_series.PNG" width="300">

@@ -2,7 +2,7 @@
 
 Capstone project by Anna Cheng, Tiffany Cheng, Tina Fang, Giulia Olsson, and Tres Pimental for UC Berkeley's Master of Information and Data Science program.
 
-<img src="images/logo.PNG" width="120">
+<img src="images/logo.PNG" width="110">
 
 ## Motivation
 
@@ -13,6 +13,8 @@ Capstone project by Anna Cheng, Tiffany Cheng, Tina Fang, Giulia Olsson, and Tre
 ## Impact
 
 Bikeshare is a popular form of transportation in many cities across the world, so the impact of our MVP is global. According to [Statista](https://www.statista.com/outlook/mmo/shared-mobility/shared-rides/bike-sharing/worldwide), bikeshare revenue will reach $8B in 2022 and the number of users is forecasted to grow to 1B by 2026. By improving the user experience for bikeshare through availability forecasts, bikeshare will be seen as a more reliable form of transportation and the number of users will grow. This is great for the climate since 1 mile biked (instead of driven) reduces CO2 emissions by 1 pound ([Scientific American](https://www.scientificamerican.com/article/is-bike-sharing-really-climate-friendly/)).
+
+<img src="images/bike_love_earth.PNG" width="175">
 
 ## User Interviews
 

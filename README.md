@@ -2,6 +2,8 @@
 
 Capstone project by Anna Cheng, Tiffany Cheng, Tina Fang, Giulia Olsson, and Tres Pimental for UC Berkeley's Master of Information and Data Science program.
 
+For more detailed information, please find the final presentation slides [here](https://github.com/tiffanyyc/capstone_bikeshare/blob/main/presentations/presentation_3_slides.pdf).
+
 <img src="images/logo.PNG" width="110">
 
 ## Description
